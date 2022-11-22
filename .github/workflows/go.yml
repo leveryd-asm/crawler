@@ -22,7 +22,7 @@ jobs:
         go-version: 1.18
 
     - name: Build
-      run: cd consumerKatana && go build -v
+      run: cd consumerKatana && export CGO_ENABLED=0 && go build -v
       
 # https://docs.github.com/en/actions/publishing-packages/publishing-docker-images
     - name: Log in to Docker Hub
