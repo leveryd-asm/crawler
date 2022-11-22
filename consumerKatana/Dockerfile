@@ -1,3 +1,3 @@
 FROM projectdiscovery/katana:latest
-COPY consumerKatana /usr/bin/consumerKatana
+COPY consumerKatana/consumerKatana /usr/bin/consumerKatana
 ENTRYPOINT ["/usr/bin/consumerKatana"]
