@@ -31,6 +31,13 @@ func main() {
 
 	proxy := os.Getenv("proxy")
 
+	// fix: in k8s environment, katana's proxy option must be like a normal domain, so it can not be k8s service name.
+	// we can try to treat XRAY_PROXY_SERVICE_PORT as http proxy
+	if os.Getenv("XRAY_PROXY_SERVICE_PORT") != "" {
+		proxy = os.Getenv("XRAY_PROXY_SERVICE_PORT")
+		proxy = strings.ReplaceAll(proxy, "tcp://", "http://")
+	}
+
 	reader := getKafkaReader(kafkaURL, topic, groupID)
 
 	defer reader.Close()
