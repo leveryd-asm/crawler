@@ -45,7 +45,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: leveryd/scan:katana
+        tags: leveryd/katana:v2022.11.23
         file: consumerKatana/Dockerfile
 
     - name: Build and push producer Docker image
@@ -53,5 +53,5 @@ jobs:
       with:
         context: .
         push: true
-        tags: leveryd/scan:producer
+        tags: leveryd/katana-api:v2022.11.23
         file: producer/Dockerfile
