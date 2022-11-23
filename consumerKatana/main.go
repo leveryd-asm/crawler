@@ -50,8 +50,12 @@ func main() {
 		}
 		//fmt.Printf("message at topic:%v partition:%v offset:%v	%s = %s\n", m.Topic, m.Partition, m.Offset, string(m.Key), string(m.Value))
 
-		cmd := "/usr/local/bin/katana -u " + string(m.Value) + " -proxy " + proxy
+		cmd := "/usr/local/bin/katana -v -u " + string(m.Value) + " -proxy " + proxy
 		fmt.Println(cmd)
-		exec.Command("/bin/sh", "-c", cmd).Output()
+		output, err := exec.Command("/bin/sh", "-c", cmd).Output()
+		if err != nil {
+			fmt.Println(err)
+		}
+		println(output)
 	}
 }
