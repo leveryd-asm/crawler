@@ -4,7 +4,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"strings"
@@ -31,13 +30,6 @@ func main() {
 
 	proxy := os.Getenv("proxy")
 
-	// fix: in k8s environment, katana's proxy option must be like a normal domain, so it can not be k8s service name.
-	// we can try to treat XRAY_PROXY_SERVICE_PORT as http proxy
-	if os.Getenv("XRAY_PROXY_SERVICE_PORT") != "" {
-		proxy = os.Getenv("XRAY_PROXY_SERVICE_PORT")
-		proxy = strings.ReplaceAll(proxy, "tcp://", "http://")
-	}
-
 	reader := getKafkaReader(kafkaURL, topic, groupID)
 
 	defer reader.Close()
@@ -46,9 +38,16 @@ func main() {
 	for {
 		m, err := reader.ReadMessage(context.Background())
 		if err != nil {
-			log.Fatalln(err)
+			fmt.Println(err)
 		}
 		//fmt.Printf("message at topic:%v partition:%v offset:%v	%s = %s\n", m.Topic, m.Partition, m.Offset, string(m.Key), string(m.Value))
+
+		// fix: in k8s environment, katana's proxy option must be like a normal domain, so it can not be k8s service name.
+		// we can try to treat XRAY_PROXY_SERVICE_PORT as http proxy
+		if os.Getenv("XRAY_PROXY_SERVICE_PORT") != "" {
+			proxy = os.Getenv("XRAY_PROXY_SERVICE_PORT")
+			proxy = strings.ReplaceAll(proxy, "tcp://", "http://")
+		}
 
 		cmd := "/usr/local/bin/katana -v -u " + string(m.Value) + " -proxy " + proxy
 		fmt.Println(cmd)
